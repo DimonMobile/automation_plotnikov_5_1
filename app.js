@@ -32,13 +32,22 @@ primeNumberCallback(100000, p => console.log("Callback: ", p));
 // promises
 function primeNumberPromise(number) {
     return new Promise(function(resolve, reject){
-        if (number < 0) {
-            reject(new Error("Invalid argument (shoud be > 0)"));
-        } else {
-            process.nextTick(resolve(primeNumber(number)));
-        }
+        process.nextTick(function() {
+            if (number < 0) {
+                reject(new Error("Invalid argument (shoud be > 0)"));
+            } else {
+                resolve(primeNumber(number));
+            }
+        });
     });
 }
 console.log("Promise called");
 primeNumberPromise(100000).then(p => console.log("Promise:", p), p => console.log("!Error", p));
 primeNumberPromise(-5).then(p => console.log("Promise:", p), p => console.log("!Error", p));
+
+// async/await
+async function primeNumberAsync(number) {
+    return await primeNumberPromise(number);
+}
+console.log("Async started");
+primeNumberAsync(100000).then(p => console.log("Async/Await:", p));
