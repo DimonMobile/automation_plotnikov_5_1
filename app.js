@@ -60,3 +60,14 @@ function primeNumberCallbackAndPromise(number) {
 }
 console.log("Promise + callback called");
 primeNumberCallbackAndPromise(100000).then(p => console.log("Promise&Callback:", p));
+
+// promise + async/await
+async function primeNumberPromiseAndAsyncAwait(number) {
+    let promise = new Promise(function(resolve, reject) {
+        resolve(primeNumber(number));
+    });
+    let result = await promise;
+    return result;
+}
+console.log("Promise + async/await called");
+primeNumberPromiseAndAsyncAwait(100000).then(p => console.log("Promise&Async/Await:", p));
