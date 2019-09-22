@@ -51,3 +51,12 @@ async function primeNumberAsync(number) {
 }
 console.log("Async started");
 primeNumberAsync(100000).then(p => console.log("Async/Await:", p));
+
+// callback + promise
+function primeNumberCallbackAndPromise(number) {
+    return new Promise(function(resolve, reject) {
+        primeNumberCallback(number, resolve);
+    });
+}
+console.log("Promise + callback called");
+primeNumberCallbackAndPromise(100000).then(p => console.log("Promise&Callback:", p));
