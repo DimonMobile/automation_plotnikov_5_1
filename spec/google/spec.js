@@ -32,8 +32,8 @@ afterAll(async function(done) {
   done();
 });
 
-describe('Google iTechArt', function () {
-  it('iTechArt text on first page', function (done) {
+describe('Google text', function () {
+  it('text exists on first page', function (done) {
     // I have not found another way to handle page loaded event:(
     driver.wait(async function () {
       const readyState = await driver.executeScript('return document.readyState');
@@ -44,9 +44,9 @@ describe('Google iTechArt', function () {
         done();
       });
     });
-  });
+  }, 10000);
 
-  it('iTechArt text on second page', async function (done) {
+  it('text exists on second page', async function (done) {
     await driver.wait(until.elementLocated(By.id('pnnext')));
     await driver.findElement(By.id('pnnext'))
       .then(element => element.click());
@@ -58,7 +58,7 @@ describe('Google iTechArt', function () {
       expect(source.includes(Config.searchString)).toBe(true);
       done();
     });
-  });
+  }, 10000);
 
   it('Results count greater than x', async function(done) {
     let element = await driver.wait(until.elementLocated(By.id('resultStats')));
@@ -69,5 +69,5 @@ describe('Google iTechArt', function () {
     resultsCount = parseInt(found);
     expect(resultsCount).toBeGreaterThan(Config.expectedResults);
     done();
-  });
+  }, 10000);
 });
