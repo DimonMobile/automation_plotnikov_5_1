@@ -1,2 +1,2 @@
-exports.searchString = 'Foo bar';
+exports.searchString = 'iTechArt';
 exports.expectedResults = 5000;

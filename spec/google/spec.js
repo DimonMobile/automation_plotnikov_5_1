@@ -17,23 +17,23 @@ beforeAll(function (done) {
   driver.get('https://google.com/').then(() => {
     driver.findElement(By.name('q')).then(tag => {
       tag.sendKeys(Config.searchString).then(() => {
-        tag.sendKeys(Key.ENTER);
-        done();
+        tag.sendKeys(Key.ENTER).then(() => {
+          done();
+        });
       });
     });
   });
   dateStarted = new Date();
-}, 10000);
+}, 15000);
 
-afterAll(async function(done) {
+afterAll(async function() {
   await driver.quit();
   console.log(`\nResults: ${resultsCount}`);
   console.log(`Time: ${new Date() - dateStarted}ms`);
-  done();
-});
+}, 15000);
 
-describe('Google text', function () {
-  it('text exists on first page', function (done) {
+describe('Google', function () {
+  it('Text exists on the first page', function (done) {
     // I have not found another way to handle page loaded event:(
     driver.wait(async function () {
       const readyState = await driver.executeScript('return document.readyState');
@@ -46,7 +46,14 @@ describe('Google text', function () {
     });
   }, 10000);
 
-  it('text exists on second page', async function (done) {
+  it('Text exists in url of the first page', function(done) {
+    driver.getCurrentUrl().then(url => {
+      expect(url.includes(Config.searchString)).toBe(true);
+      done();
+    });
+  }, 10000);
+
+  it('Text exists on the second page', async function (done) {
     await driver.wait(until.elementLocated(By.id('pnnext')));
     await driver.findElement(By.id('pnnext'))
       .then(element => element.click());
@@ -69,5 +76,12 @@ describe('Google text', function () {
     resultsCount = parseInt(found);
     expect(resultsCount).toBeGreaterThan(Config.expectedResults);
     done();
+  }, 10000);
+
+  it('Text exists in url of the second page', function(done) {
+    driver.getCurrentUrl().then(url => {
+      expect(url.includes(Config.searchString)).toBe(true);
+      done();
+    });
   }, 10000);
 });
