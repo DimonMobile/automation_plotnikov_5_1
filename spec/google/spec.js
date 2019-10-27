@@ -24,13 +24,13 @@ beforeAll(function (done) {
     });
   });
   dateStarted = new Date();
-}, 15000);
+}, 20000);
 
 afterAll(async function() {
   await driver.quit();
   console.log(`\nResults: ${resultsCount}`);
   console.log(`Time: ${new Date() - dateStarted}ms`);
-}, 15000);
+}, 20000);
 
 describe('Google', function () {
   it('Text exists on the first page', function (done) {
@@ -40,18 +40,18 @@ describe('Google', function () {
       return readyState === 'complete';
     }).then(() => {
       driver.getPageSource().then(source => {
-        expect(source.includes(Config.searchString)).toBe(true);
+        expect(source.toLowerCase().includes(Config.searchString.toLowerCase())).toBe(true);
         done();
       });
     });
-  }, 10000);
+  }, 20000);
 
   it('Text exists in url of the first page', function(done) {
     driver.getCurrentUrl().then(url => {
-      expect(url.includes(Config.searchString)).toBe(true);
+      expect(url.toLowerCase().includes(Config.searchString.toLowerCase())).toBe(true);
       done();
     });
-  }, 10000);
+  }, 20000);
 
   it('Text exists on the second page', async function (done) {
     await driver.wait(until.elementLocated(By.id('pnnext')));
@@ -62,10 +62,10 @@ describe('Google', function () {
       return readyState === 'complete';
     });
     driver.getPageSource().then(source => {
-      expect(source.includes(Config.searchString)).toBe(true);
+      expect(source.toLowerCase().includes(Config.searchString.toLowerCase())).toBe(true);
       done();
     });
-  }, 10000);
+  }, 20000);
 
   it('Results count greater than x', async function(done) {
     let element = await driver.wait(until.elementLocated(By.id('resultStats')));
@@ -76,12 +76,12 @@ describe('Google', function () {
     resultsCount = parseInt(found);
     expect(resultsCount).toBeGreaterThan(Config.expectedResults);
     done();
-  }, 10000);
+  }, 20000);
 
   it('Text exists in url of the second page', function(done) {
     driver.getCurrentUrl().then(url => {
-      expect(url.includes(Config.searchString)).toBe(true);
+      expect(url.toLowerCase().includes(Config.searchString.toLowerCase())).toBe(true);
       done();
     });
-  }, 10000);
+  }, 20000);
 });
