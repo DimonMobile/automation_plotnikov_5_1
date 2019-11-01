@@ -10,30 +10,53 @@ require('chromedriver');
 require('geckodriver');
 
 const Config = require('../../testData.js');
+
 // logger configuration
 const log4js = require('log4js');
-const logger = log4js.getLogger();
+
 log4js.configure({
     appenders: {
-        everything: {type: 'file', filename: 'logs/log.txt', pattern: 'yyyy-MM-dd-hh', compress: true},
+        file: {type: 'file', filename: 'logs/log.txt', pattern: 'yyyy-MM-dd-hh', compress: true},
+        stdout: {type: 'stdout'}
     },
     categories: {
-        default: { appenders: ['everything'], level: 'trace'}
+        default: { appenders: ['file', 'stdout'], level: 'debug'},
+        trc: {appenders: ['file'], level: 'trace'}
     }
 });
 
+const loggerDefault = log4js.getLogger();
+const loggerTrace = log4js.getLogger('trc');
+
+let logger = {
+    trace: str => loggerTrace.trace(str),
+    debug: str => loggerDefault.debug(str),
+    info: str => loggerDefault.info(str),
+    warn: str => loggerDefault.warn(str),
+    error: str => loggerDefault.error(str),
+    fatal: str => loggerDefault.fatal(str)
+}
+
+// preparing webdriver
 const { Builder, By, Key, until } = require('selenium-webdriver');
 let driver = new Builder().forBrowser(browser).build();
 let resultsCount = 0;
 let dateStarted;
 
-// using PageObject pattern
+// preparing allure
+const AllureReporter = require('jasmine-allure-reporter');
+jasmine.getEnv().addReporter(new AllureReporter({
+    resultsDir: 'allure-results'
+}));
+
+// preparing PageObject pattern
 let GooglePage = require('./google-page.js');
 
 let page = new GooglePage.Page(driver, By, Key, until, logger);
 let resultsPage = null;
 
 beforeAll(async function () {
+    logger.trace('beforeAll');
     dateStarted = new Date();
     await page.open();
     await page.setSearchQuery(Config.searchString);
@@ -42,7 +65,7 @@ beforeAll(async function () {
 
 afterAll(async function () {
     await driver.quit();
-    await logger.trace(`Results: ${resultsCount}; Time: ${new Date() - dateStarted}ms`);
+    logger.trace(`Results: ${resultsCount}; Time: ${new Date() - dateStarted}ms`);
 
     await log4js.shutdown();
 }, 20000);

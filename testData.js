@@ -1,2 +1,2 @@
 exports.searchString = 'iTechArt';
-exports.expectedResults = 5000;
+exports.expectedResults = 70000;
