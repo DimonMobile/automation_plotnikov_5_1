@@ -5,10 +5,22 @@ if (process.argv.length > 2) {
     browser = process.argv[2].match(regex)[1];
 }
 
-// preparing selenium and config
+// preparing selenium, config and logger
 require('chromedriver');
 require('geckodriver');
+
 const Config = require('../../testData.js');
+// logger configuration
+const log4js = require('log4js');
+const logger = log4js.getLogger();
+log4js.configure({
+    appenders: {
+        everything: {type: 'file', filename: 'logs/log.txt', pattern: 'yyyy-MM-dd-hh', compress: true},
+    },
+    categories: {
+        default: { appenders: ['everything'], level: 'trace'}
+    }
+});
 
 const { Builder, By, Key, until } = require('selenium-webdriver');
 let driver = new Builder().forBrowser(browser).build();
@@ -18,7 +30,7 @@ let dateStarted;
 // using PageObject pattern
 let GooglePage = require('./google-page.js');
 
-let page = new GooglePage.Page(driver, By, Key, until);
+let page = new GooglePage.Page(driver, By, Key, until, logger);
 let resultsPage = null;
 
 beforeAll(async function () {
@@ -30,27 +42,43 @@ beforeAll(async function () {
 
 afterAll(async function () {
     await driver.quit();
-    console.log(`\nResults: ${resultsCount}`);
-    console.log(`Time: ${new Date() - dateStarted}ms`);
+    await logger.trace(`Results: ${resultsCount}; Time: ${new Date() - dateStarted}ms`);
+
+    await log4js.shutdown();
 }, 20000);
 
-describe('Google', function () {
-    it('Each google result contains text on the first page', async function () {
+const describeStr = `Googling ${Config.searchString}`;
+const firstItDescription = 'Each google result contains text on the first page';
+const secondItDescription = 'Each google result cointains text on the second page';
+const thirdItDescription = `Results amount greater than ${Config.expectedResults}`;
+
+describe(describeStr, function () {
+    logger.info(`${describeStr} starts`);
+
+    it(firstItDescription, async function () {
+        logger.info(`${firstItDescription} starts`);
         for (text of await resultsPage.getSearchItemsTexts()) {
-            await expect(text).toContain(Config.searchString);
+            await expect(text.toLowerCase()).toContain(Config.searchString.toLowerCase());
         }
         await resultsPage.nextPage();
+        logger.info(`${firstItDescription} finished`);
     }, 20000);
 
-    it('Each google result cointains text on the second page', async function () {
+    it(secondItDescription, async function () {
+        logger.info(`${secondItDescription} starts`);
         for (text of await resultsPage.getSearchItemsTexts()) {
-            await expect(text).toContain(Config.searchString);
+            await expect(text.toLowerCase()).toContain(Config.searchString.toLowerCase());
         }
+        logger.info(`${secondItDescription} finished`);
     }, 20000);
 
-    it(`Results amount greater than ${Config.expectedResults}`, async function() {
-        let count = await resultsPage.getResultsCount();
-        await expect(count).toBeGreaterThan(Config.expectedResults);
+    it(thirdItDescription, async function() {
+        logger.info(`${thirdItDescription} starts`);
+        resultsCount = await resultsPage.getResultsCount();
+        await expect(resultsCount).toBeGreaterThan(Config.expectedResults);
+        logger.info(`${thirdItDescription} finished`);
     }, 20000);
+
+    logger.info(`${describeStr} finished`);
 });
  
