@@ -36,4 +36,14 @@ function ResultsPage(driver, By, Key, Until) {
         let nextElement = await driver.wait(Until.elementLocated(By.id('pnnext')));
         await nextElement.click();
     }
+
+    this.getResultsCount = async function() {
+        let element = await driver.wait(Until.elementLocated(By.id('resultStats')));
+        let text = await element.getText();
+        let regex = /((\d+\s*)+)/;
+        let found = text.match(regex)[1];
+        found = found.replace(' ', '');
+        resultsCount = parseInt(found);
+        return resultsCount;
+    }
 }

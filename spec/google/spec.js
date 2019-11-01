@@ -35,22 +35,21 @@ afterAll(async function () {
 }, 20000);
 
 describe('Google', function () {
-
-    function isAllEntriesFound(texts) {
-        texts.forEach(text => {
-            if (!text.toLowerCase().includes(Config.searchString.toLowerCase())) {
-                return false;
-            }
-        });
-        return true;
-    }
-
     it('Each google result contains text on the first page', async function () {
-        expect(isAllEntriesFound(await resultsPage.getSearchItemsTexts())).toBe(true);
+        for (text of await resultsPage.getSearchItemsTexts()) {
+            await expect(text).toContain(Config.searchString);
+        }
     }, 20000);
 
     it('Each google result cointains text on the second page', async function () {
-        await resultsPage.nextPage();
-        expect(isAllEntriesFound(await resultsPage.getSearchItemsTexts())).toBe(true);
+        for (text of await resultsPage.getSearchItemsTexts()) {
+            await expect(text).toContain(Config.searchString);
+        }
+    }, 20000);
+
+    it(`Results amount greater than ${Config.expectedResults}`, async function() {
+        let count = await resultsPage.getResultsCount();
+        await expect(count).toBeGreaterThan(Config.expectedResults);
     }, 20000);
 });
+ 
