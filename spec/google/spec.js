@@ -39,6 +39,7 @@ describe('Google', function () {
         for (text of await resultsPage.getSearchItemsTexts()) {
             await expect(text).toContain(Config.searchString);
         }
+        await resultsPage.nextPage();
     }, 20000);
 
     it('Each google result cointains text on the second page', async function () {
