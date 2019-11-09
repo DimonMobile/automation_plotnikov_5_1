@@ -1,6 +1,6 @@
 # Preparing:
  - npm install
 # Run:
- - npm test [-- --browser=chrome/firefox]
+ - npm test
 # Generate and view allure report:
  - npm run-script report
