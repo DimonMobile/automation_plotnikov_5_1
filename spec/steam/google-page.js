@@ -1,4 +1,4 @@
-let ResultsPage = require('./results-page.js').ResultsPage;
+let ResultsPage = require('./results-page.js.js').ResultsPage;
 
 exports.Page = function (driver, By, Key, Until, logger) {
 
