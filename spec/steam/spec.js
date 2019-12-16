@@ -28,12 +28,13 @@ let storePage = new MainPage.Page(driver, By, Key, until, logger);
 let gamePage = new GamePage.Page(driver, By, Key, until, logger);
 
 beforeAll(async function () {
-    logger.trace('beforeAll');
+    logger.debug('beforeAll()');
     await storePage.open();
 }, 30000);
 
 afterAll(async function () {
-//    await driver.quit();
+    logger.debug('afterAll()')
+    await driver.quit();
     await logger.shutdown();
 }, 30000);
 
@@ -41,7 +42,7 @@ describe('11_Steam', function () {
     let listGameData;
 
     it('Genre exists', async () => {
-        await expect(await storePage.clickGameGenre('Экшен')).toBeTrue();
+        await expect(await storePage.clickGameGenre('Action')).toBeTrue();
     }, 30000);
 
     it('Obtain the game', async () => {
@@ -51,6 +52,7 @@ describe('11_Steam', function () {
         } else {
             listGameData = await storePage.clickGameByHighestPrice(games);
         }
+        await gamePage.checkAndProcessAgegate(1990);
     }, 30000);
 
     it('Compare price and discount', async () => {
