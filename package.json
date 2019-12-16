@@ -7,33 +7,21 @@
     "lib": "lib"
   },
   "dependencies": {
-    "allure-commandline": "^2.13.0",
-    "appium": "^1.15.1",
-    "chromedriver": "^77.0.0",
-    "geckodriver": "^1.19.0",
-    "jasmine": "^3.5.0",
-    "jasmine-allure-reporter": "^1.0.2",
-    "log4js": "^5.3.0",
-    "open": "^7.0.0",
-    "opn": "^6.0.0",
-    "selenium-webdriver": "^4.0.0-alpha.5",
-    "@wdio/appium-service": "^5.13.2",
-    "@wdio/cli": "^5.15.6",
-    "@wdio/jasmine-framework": "^5.15.1",
-    "@wdio/local-runner": "^5.15.6",
-    "@wdio/sauce-service": "^5.14.0",
-    "@wdio/spec-reporter": "^5.15.2",
-    "@wdio/sync": "^5.15.7"
-  },
-  "devDependencies": {
-    "wdio-allure-reporter": "^0.8.3",
-    "wdio-appium-service": "^0.2.3",
-    "wdio-jasmine-framework": "^0.3.8"
+    "@wdio/cli": "^5.16.16"
   },
   "scripts": {
     "test": "node ./node_modules/jasmine/bin/jasmine.js",
     "report": "node ./report.js"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "@wdio/appium-service": "^5.16.11",
+    "@wdio/jasmine-framework": "^5.16.15",
+    "@wdio/local-runner": "^5.16.15",
+    "@wdio/sync": "^5.16.15",
+    "appium": "^1.15.1",
+    "wdio-appium-service": "^0.2.3",
+    "wdio-jasmine-framework": "^0.3.8"
+  }
 }
