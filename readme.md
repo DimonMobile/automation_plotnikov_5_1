@@ -1,6 +1,6 @@
 # Preparing:
  - npm install
+# Configuring at
+ - spec/androidapp/support/conf.js
 # Run:
- - npm test [-- --browser=chrome/firefox]
-# Generate and view allure report:
- - npm run-script report
+ - npm test

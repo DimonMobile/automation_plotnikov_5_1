@@ -7,11 +7,11 @@
     "lib": "lib"
   },
   "dependencies": {
-    "@wdio/cli": "^5.16.16"
+    "@wdio/cli": "^5.16.16",
+    "log4js": "^6.1.0"
   },
   "scripts": {
-    "test": "node ./node_modules/jasmine/bin/jasmine.js",
-    "report": "node ./report.js"
+    "test": "./node_modules/.bin/wdio ./wdio.conf.js"
   },
   "author": "",
   "license": "ISC",

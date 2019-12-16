@@ -1,3 +1,5 @@
+let specConf = require('./spec/androidapp/support/conf');
+
 exports.config = {
     //
     // ====================
@@ -18,7 +20,7 @@ exports.config = {
     // directory is where your package.json resides, so `wdio` will be called from there.
     //
     specs: [
-        './spec/**/*.js'
+        './spec/androidapp/spec.js'
     ],
     // Patterns to exclude.
     exclude: [
@@ -51,7 +53,7 @@ exports.config = {
             platformName: 'Android',
             platformVersion: 9,
             deviceName: 'Android Emulator',
-            app: 'D:\\MyFiles\\BSTU\\3rd\\1st\\automation_plotnikov_5_1\\app-release.apk',
+            app: specConf.PathToApp,
             automationName: 'UiAutomator2',
         }
     ],
