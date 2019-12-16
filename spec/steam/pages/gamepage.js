@@ -15,7 +15,7 @@ let GamePage = function (driver, By, Key, Until, logger) {
         }
 
         let discountFinalPriceElement = await gamePurchaseElemnt.findElement(By.className('discount_final_price'));
-        let price = parseFloat((await discountFinalPriceElement.getText()).substr(1));
+        let price = parseFloat((await discountFinalPriceElement.getText()).substr(1)); // skip first $ symbol
         return {
             price: price,
             discount: discount

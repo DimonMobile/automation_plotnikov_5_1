@@ -1,3 +1,6 @@
+let fs = require('fs');
+let conf = require('../support/conf');
+
 exports.Page = function (driver, By, Key, Until, logger) {
 
     this.open = async () => {
@@ -56,8 +59,8 @@ exports.Page = function (driver, By, Key, Until, logger) {
             items: items
         };
     }
-    
-    this.clickGameByHighestDiscount = async function(games) {
+
+    this.clickGameByHighestDiscount = async function (games) {
         logger.debug(`storepage.clickGameByHighestDiscount(games)`);
         let items = games.items;
         let maxDiscount = 0;
@@ -79,7 +82,7 @@ exports.Page = function (driver, By, Key, Until, logger) {
         };
     }
 
-    this.clickGameByHighestPrice = async function(games) {
+    this.clickGameByHighestPrice = async function (games) {
         logger.debug(`storepage.clickGameByHighestPrice(games)`);
         let items = games.items;
         let maxprice = 0;
@@ -100,5 +103,44 @@ exports.Page = function (driver, By, Key, Until, logger) {
             discount: pickedDiscount,
             price: maxprice
         };
+    }
+
+    this.clickInstallSteamBtnAndDownloadSteam = async function () {
+        return new Promise(async (resolve, error) => {
+            logger.debug(`storepage.clickInstallSteamBtn()`);
+            let installSteamBtn = await driver.wait(Until.elementLocated(By.className('header_installsteam_btn_content')));
+            await installSteamBtn.click();
+
+            let oldFileOperations = 0;
+            let fileOperations = oldFileOperations;
+
+            let checkerTimer;
+            let watcher = fs.watch(conf.DownloadsPath, (event, filename) => {
+                ++fileOperations;
+                if (event === 'change' && filename.match(/^.+\.exe$/)) {
+                    watcher.close();
+                    if (checkerTimer != undefined)
+                        clearInterval(checkerTimer);
+                    resolve(true);
+                }
+            });
+
+            let downloadSteamBtn = await driver.wait(Until.elementLocated(By.className('about_install_steam_link')));
+            await downloadSteamBtn.click();
+
+            // If no new file operations for a lot of time, probably we can consider it as an error.
+            checkerTimer = setInterval(() => {
+                logger.info('Checking file operations.');
+                if (fileOperations === oldFileOperations) {
+                    logger.info('No file operations. Aborting.');
+                    watcher.close();
+                    clearInterval(checkerTimer);
+                    resolve(false);
+                } else {
+                    logger.info('File operations detected. Continue.');
+                    oldFileOperations = fileOperations;
+                }
+            }, conf.DownloadsCheckingInterval);
+        });
     }
 }

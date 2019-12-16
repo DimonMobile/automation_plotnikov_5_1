@@ -9,7 +9,7 @@ if (process.argv.length > 2) {
 require('chromedriver');
 require('geckodriver');
 
-const Config = require('../../testData.js');
+const conf = require('./support/conf');
 const logger = require('./support/logger').Logger;
 
 // preparing webdriver
@@ -30,35 +30,39 @@ let gamePage = new GamePage.Page(driver, By, Key, until, logger);
 beforeAll(async function () {
     logger.debug('beforeAll()');
     await storePage.open();
-}, 30000);
+}, conf.DefaultTimeout);
 
 afterAll(async function () {
     logger.debug('afterAll()')
     await driver.quit();
     await logger.shutdown();
-}, 30000);
+}, conf.DefaultTimeout);
 
 describe('11_Steam', function () {
-    let listGameData;
 
     it('Genre exists', async () => {
-        await expect(await storePage.clickGameGenre('Action')).toBeTrue();
-    }, 30000);
+        await expect(await storePage.clickGameGenre(conf.GameGenre)).toBeTrue();
+    }, conf.DefaultTimeout);
 
-    it('Obtain the game', async () => {
+    it('Compare price and discount', async () => {
+        let listGameData;
         let games = await storePage.getGamesList();
+
         if (games.hasDiscounts) {
             listGameData = await storePage.clickGameByHighestDiscount(games);
         } else {
             listGameData = await storePage.clickGameByHighestPrice(games);
         }
-        await gamePage.checkAndProcessAgegate(1990);
-    }, 30000);
-
-    it('Compare price and discount', async () => {
+        
+        await gamePage.checkAndProcessAgegate(conf.AgegateYear);
         let gameData = await gamePage.getGameData();
-        expect(gameData.price).toBe(listGameData.price);
-        expect(gameData.discount).toBe(listGameData.discount);
-    }, 30000);
+
+        await expect(gameData.price).toBe(listGameData.price);
+        await expect(gameData.discount).toBe(listGameData.discount);
+    }, conf.DefaultTimeout);
+
+    it('Download steam', async () => {
+        await expect(await storePage.clickInstallSteamBtnAndDownloadSteam()).toBeTrue();
+    }, conf.DownloadTimeout);
 });
  
