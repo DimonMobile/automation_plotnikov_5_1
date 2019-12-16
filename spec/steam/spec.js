@@ -23,30 +23,40 @@ jasmine.getEnv().addReporter(new AllureReporter({
 }));
 
 let MainPage = require('./pages/storepage');
-let mainPage = new MainPage.Page(driver, By, Key, until, logger);
+let GamePage = require('./pages/gamepage');
+let storePage = new MainPage.Page(driver, By, Key, until, logger);
+let gamePage = new GamePage.Page(driver, By, Key, until, logger);
 
 beforeAll(async function () {
     logger.trace('beforeAll');
-    await mainPage.open();
-}, 20000);
+    await storePage.open();
+}, 30000);
 
 afterAll(async function () {
 //    await driver.quit();
     await logger.shutdown();
-}, 20000);
+}, 30000);
 
 describe('11_Steam', function () {
+    let listGameData;
+
     it('Genre exists', async () => {
-        await expect(await mainPage.clickGameGenre('Action')).toBe(true);
-    });
+        await expect(await storePage.clickGameGenre('Экшен')).toBeTrue();
+    }, 30000);
 
     it('Obtain the game', async () => {
-        let games = await mainPage.getGamesList();
+        let games = await storePage.getGamesList();
         if (games.hasDiscounts) {
-            await mainPage.clickGameByHighestDiscount(games);
+            listGameData = await storePage.clickGameByHighestDiscount(games);
         } else {
-            await mainPage.clickGameByHighestPrice(games);
+            listGameData = await storePage.clickGameByHighestPrice(games);
         }
-    });
+    }, 30000);
+
+    it('Compare price and discount', async () => {
+        let gameData = await gamePage.getGameData();
+        expect(gameData.price).toBe(listGameData.price);
+        expect(gameData.discount).toBe(listGameData.discount);
+    }, 30000);
 });
  

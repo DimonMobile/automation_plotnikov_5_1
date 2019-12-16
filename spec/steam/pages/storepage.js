@@ -6,7 +6,7 @@ exports.Page = function (driver, By, Key, Until, logger) {
     }
 
     this.clickGameGenre = async (genreName) => {
-        logger.debug(`storepage.open(${genreName})`);
+        logger.debug(`storepage.clickGameGenre(${genreName})`);
 
         const genresDivId = 'genre_flyout';
 
@@ -36,14 +36,14 @@ exports.Page = function (driver, By, Key, Until, logger) {
             let discount;
             try {
                 let discountBagde = await gameElement.findElement(By.className('discount_pct'));
-                discount = parseInt(await discountBagde.getText());
+                discount = parseFloat(await discountBagde.getText());
                 hasDiscounts = true;
             } catch (e) {
                 discount = 0;
             }
 
             let discountPriceBadge = await gameElement.findElement(By.className('discount_final_price'));
-            let price = (await discountPriceBadge.getText()).substr(1);
+            let price = parseFloat((await discountPriceBadge.getText()).substr(1));
             let gameObject = {
                 discount: discount,
                 price: price,
@@ -61,31 +61,44 @@ exports.Page = function (driver, By, Key, Until, logger) {
         logger.debug(`storepage.clickGameByHighestDiscount(games)`);
         let items = games.items;
         let maxDiscount = 0;
+        let pickedPrice = 0;
         let maxElement = undefined;
 
         for (let game of items) {
             if (game.discount < maxDiscount) {
                 maxElement = game.element;
                 maxDiscount = game.discount;
+                pickedPrice = game.price;
             }
         }
 
         maxElement.click();
+        return {
+            discount: maxDiscount,
+            price: pickedPrice
+        };
     }
 
     this.clickGameByHighestPrice = async function(games) {
         logger.debug(`storepage.clickGameByHighestPrice(games)`);
         let items = games.items;
-        let maxPrice = 0;
+        let maxprice = 0;
         let maxElement = undefined;
+        let pickedDiscount = 0;
 
         for (let game of items) {
-            if (game.price > maxPrice) {
+            if (game.price > maxprice) {
                 maxElement = game.element;
-                maxDiscount = game.price;
+                maxprice = game.price;
+                pickedDiscount = game.discount;
             }
         }
 
         maxElement.click();
+
+        return {
+            discount: pickedDiscount,
+            price: maxprice
+        };
     }
 }
