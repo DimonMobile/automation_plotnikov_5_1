@@ -5,7 +5,8 @@ exports.Page = function() {
     this.clickLogInBtn = function() {
         logger.debug(`MainPage.clickLogInBtn()`);
         try {
-            let loginBtn = $('android=new UiSelector().description("Login Button")');
+            //let loginBtn = $('android=new UiSelector().description("Login Button")');
+            let loginBtn = $('~Login Button');
             loginBtn.waitForExist(conf.ElementWaitingTimeout);
             loginBtn.click();
             return true;
